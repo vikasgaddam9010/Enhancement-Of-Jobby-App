@@ -10,11 +10,11 @@
   width: 60px;
   margin-right: 30px;
 }
-@media(max-width: 576px){
-  .li-item{
+@media (max-width: 576px) {
+  .li-item {
     width: 50%;
   }
-  .img-item{
+  .img-item {
     margin-right: 20px;
   }
 }
