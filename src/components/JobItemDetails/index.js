@@ -34,7 +34,7 @@ class JobItemDetails extends Component {
       this.setState({
         apiStatus: apiStatusConstants.inProgress,
       })
-      const jwtToken = Cookies.get('jwt')
+      const jwtToken = Cookies.get('jwt_token')
       const {
         match: {
           params: {id},
@@ -131,12 +131,15 @@ class JobItemDetails extends Component {
             <p>{packagePerAnnum}</p>
           </div>
           <hr />
-          <div className="center">
-            <h1>Description</h1>
-            <a className="job-list-d-flex" href={companyWebsiteUrl}>
-              <p>Visit</p>
-              <FaExternalLinkAlt className="external-link-icon" />
-            </a>
+          <div>
+            <div className="job-item-d-flex-row">
+              <h1>Description</h1>
+              <a className="job-item-list-d-flex" href={companyWebsiteUrl}>
+                <p>Visit</p>
+                <FaExternalLinkAlt className="external-link-icon" />
+              </a>
+            </div>
+
             <p className="para-description-1">{jobDescription}</p>
           </div>
 

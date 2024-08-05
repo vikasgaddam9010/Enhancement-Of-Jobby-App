@@ -1,5 +1,7 @@
 import {Component} from 'react'
 
+import {v4} from 'uuid'
+
 import Cookies from 'js-cookie'
 
 import {BsSearch} from 'react-icons/bs'
@@ -13,6 +15,14 @@ import LoaderView from '../LoaderView'
 import ProfileDetails from '../ProfileDetails'
 
 import './index.css'
+
+const initialStateList = [
+  {id: v4(), stateName: 'Hyderabad'},
+  {id: v4(), stateName: 'Bangalore'},
+  {id: v4(), stateName: 'Chennai'},
+  {id: v4(), stateName: 'Delhi'},
+  {id: v4(), stateName: 'Mumbai'},
+]
 
 const employmentTypesList = [
   {
@@ -76,6 +86,8 @@ class JobDetails extends Component {
     selectedSalary: '',
     jobInputSearch: '',
     getJobsList: [],
+    statesList: initialStateList,
+    addORRemoveStatName: [],
   }
 
   componentDidMount() {
@@ -90,7 +102,7 @@ class JobDetails extends Component {
 
     const typeJ = selectedJobType.join(',')
 
-    const jwtToken = Cookies.get('jwt')
+    const jwtToken = Cookies.get('jwt_token')
 
     const apiForForProfileDetails = `https://apis.ccbp.in/jobs?employment_type=${typeJ}&minimum_package=${selectedSalary}&search=${jobInputSearch}`
     const options = {
@@ -130,7 +142,7 @@ class JobDetails extends Component {
 
   getProfile = async () => {
     this.setState({profileState: profileStatus.loader}) // profile updated to loader.
-    const jwtToken = Cookies.get('jwt')
+    const jwtToken = Cookies.get('jwt_token')
 
     const apiForForProfileDetails = 'https://apis.ccbp.in/profile'
     const options = {
@@ -213,10 +225,21 @@ class JobDetails extends Component {
   }
 
   getSuccessView = () => {
-    const {getJobsList} = this.state
+    const {getJobsList, addORRemoveStatName} = this.state
+    const finalJobsList = addORRemoveStatName.map(eachStateName =>
+      getJobsList.filter(eachJob => eachJob.location === eachStateName),
+    )
+    const resultOfFinalJobList =
+      finalJobsList.length > 0 &&
+      finalJobsList.reduce((a, b) => a.concat(b), [])
+    const z =
+      resultOfFinalJobList.length === undefined
+        ? getJobsList
+        : resultOfFinalJobList
+
     return (
       <ul>
-        {getJobsList.map(eachJob => (
+        {z.map(eachJob => (
           <JobItem key={eachJob.id} eachJob={eachJob} />
         ))}
       </ul>
@@ -268,8 +291,20 @@ class JobDetails extends Component {
     }
   }
 
+  onClickToUpdateStateCheck = event => {
+    const {addORRemoveStatName} = this.state
+
+    if (addORRemoveStatName.includes(event.target.value)) {
+      const r = addORRemoveStatName.filter(each => each !== event.target.value)
+      this.setState({addORRemoveStatName: r})
+    } else {
+      const r = [...addORRemoveStatName, event.target.value]
+      this.setState({addORRemoveStatName: r})
+    }
+  }
+
   render() {
-    const {jobInputSearch} = this.state
+    const {jobInputSearch, statesList} = this.state
 
     return (
       <>
@@ -326,6 +361,23 @@ class JobDetails extends Component {
                   />
                   <label className="label" htmlFor={eachType.salaryRangeId}>
                     {eachType.label}
+                  </label>
+                </li>
+              ))}
+            </ul>
+            <hr />
+            <h1 className="heading">Select State</h1>
+            <ul>
+              {statesList.map(eachType => (
+                <li key={eachType.id} className="margin-bottom">
+                  <input
+                    onChange={this.onClickToUpdateStateCheck}
+                    value={eachType.stateName}
+                    id={eachType.id}
+                    type="checkbox"
+                  />
+                  <label className="label" htmlFor={eachType.id}>
+                    {eachType.stateName}
                   </label>
                 </li>
               ))}
