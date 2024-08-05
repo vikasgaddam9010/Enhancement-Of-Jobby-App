@@ -39,7 +39,7 @@
   font-size: 20px;
 }
 
-.job-item-list-d-flex{
+.job-item-list-d-flex {
   display: flex;
   align-items: center;
 }
